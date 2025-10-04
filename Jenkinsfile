@@ -47,7 +47,8 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 sh """
-                    apk add --no-cache docker-cli
+                    apt-get update -y
+                    apt-get install -y docker.io
                     docker build -t $REGISTRY/$APP_NAME:$BUILD_NUMBER .
                 """
             }

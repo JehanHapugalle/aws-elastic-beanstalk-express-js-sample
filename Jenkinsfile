@@ -46,10 +46,10 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh '''
+                sh """
                     apk add --no-cache docker-cli
-                    sh docker build -t $REGISTRY/$APP_NAME:$BUILD_NUMBER .
-                '''
+                    docker build -t $REGISTRY/$APP_NAME:$BUILD_NUMBER .
+                """
             }
         }
 
@@ -60,10 +60,10 @@ pipeline {
                     usernameVariable: 'DOCKER_USER',
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
-                    sh '''
-                        echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+                    sh """
+                        echo \$DOCKER_PASS | docker login -u \$DOCKER_USER --password-stdin
                         docker push $REGISTRY/$APP_NAME:$BUILD_NUMBER
-                    '''
+                    """
                 }
             }
         }

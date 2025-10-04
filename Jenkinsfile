@@ -48,7 +48,7 @@ pipeline {
             steps {
                 sh '''
                     apk add --no-cache docker-cli
-                    sh 'docker build -t $REGISTRY/$APP_NAME:$BUILD_NUMBER .'
+                    sh docker build -t $REGISTRY/$APP_NAME:$BUILD_NUMBER .
                 '''
             }
         }

@@ -7,6 +7,7 @@ pipeline {
     environment {
         REGISTRY = "docker.io/jehansnh"
         APP_NAME = "aws-sample-node"
+        TAG = 'latest'
     }
 
     stages {
@@ -18,13 +19,22 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                sh 'npm test || echo "Tests complete"'
+                sh '''
+                    if npm run test; then
+                        echo "Tests passed"
+                    else
+                        echo "No test script found or test failed, continuing pipeline"
+                    fi
+                '''
             }
         }
 
         stage('Security Scan') {
             steps {
-                withCredentials([string(credentialsId: 'SNYK_TOKEN', variable: 'SNYK_TOKEN')]) {
+                withCredentials([string(
+                    credentialsId: 'SNYK_TOKEN', 
+                    variable: 'SNYK_TOKEN'
+                )]) {
                     sh '''
                         npm install -g snyk
                         snyk auth $SNYK_TOKEN
@@ -36,7 +46,10 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $REGISTRY/$APP_NAME:$BUILD_NUMBER .'
+                sh '''
+                    apk add --no-cache docker-cli
+                    sh 'docker build -t $REGISTRY/$APP_NAME:$BUILD_NUMBER .'
+                '''
             }
         }
 

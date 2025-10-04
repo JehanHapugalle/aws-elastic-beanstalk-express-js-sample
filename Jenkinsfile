@@ -74,6 +74,8 @@ pipeline {
 
     post {
         always {
+            archiveArtifacts artifacts: '**/npm-debug.log, **/build/**, **/target/**', allowEmptyArchive: true
+            echo 'Logs and artifacts archived.'
             echo 'Pipeline finished.'
         }
         failure {
